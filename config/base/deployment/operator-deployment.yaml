@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cache-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cache-operator
+  name: cache-operator-deployment
+  namespace: cache-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cache-operator
+  template:
+    metadata:
+      labels:
+        app: cache-operator
+    spec:
+      containers:
+      - name: operator
+        args:
+        - start
+        image: kuroboros-operator:latest
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /home/app/operator/operator.toml
+          name: config-volume
+          subPath: operator.toml
+      securityContext:
+        runAsNonRoot: true
+      serviceAccount: operator-sa
+      volumes:
+      - configMap:
+          name: operator-config
+        name: config-volume

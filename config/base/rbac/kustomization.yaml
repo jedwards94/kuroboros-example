@@ -1,0 +1,9 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+resources:
+- service-account.yaml
+- operator-role.yaml
+- operator-role-binding.yaml
+- leader-election-role.yaml
+- leader-election-role-binding.yaml

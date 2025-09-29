@@ -1,0 +1,36 @@
+[operator]
+name = "cache-operator"
+leader_acquire_interval_seconds = 10
+pending_remove_interval_seconds = 5
+
+# Your SSL Config
+[operator.webhook_server]
+port = 443
+cert_path = "/etc/tls/tls.crt"
+key_path = "/etc/tls/tls.key"
+
+
+# Operator Metrics
+[operator.metrics]
+interval_seconds = 5
+port = 8080
+
+## Example configuration to set image in Kustomization and other porcesses
+[build]
+[build.builder]
+binary = "docker"
+args = ["build .", "-t $IMG"]
+[build.image]
+registry = ""
+repository = "cache-operator"
+tag_prefix = "v"
+tag = "$PYPROJECT_VERSION"
+
+
+## Generate command related
+[generate]
+## Creates a new policy for the operator-role to allow CRUD of deployments
+[[generate.rbac.policies]]
+api_groups = ["apps"]
+resources = ["deployments"]
+verbs = ["create", "patch", "update", "list", "watch", "delete"]

@@ -1,0 +1,30 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: operator-role
+  namespace: cache-operator
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - patch
+  - update
+  - list
+  - watch
+  - delete
+- apiGroups:
+  - kuroboros.io
+  resources:
+  - caches
+  - caches/status
+  verbs:
+  - create
+  - list
+  - watch
+  - delete
+  - get
+  - patch
+  - update

@@ -1,0 +1,56 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+resources:
+- ../../base/rbac
+- ../../base/crd
+- ../../base/deployment
+- ../../base/webhooks
+- ./pod-monitor.yaml
+- ./cert.yaml
+
+namespace: cache-operator
+patches:
+- target:
+    group: admissionregistration.k8s.io
+    version: v1
+    kind: ValidatingWebhookConfiguration
+    name: cache-operator-validation-webhook
+  patch: |-
+    - op: add
+      path: /metadata/annotations
+      value:
+        cert-manager.io/inject-ca-from: cache-operator/my-selfsigned-ca
+- target:
+    group: admissionregistration.k8s.io
+    version: v1
+    kind: MutatingWebhookConfiguration
+    name: cache-operator-mutation-webhook
+  patch: |-
+    - op: add
+      path: /metadata/annotations
+      value:
+        cert-manager.io/inject-ca-from: cache-operator/my-selfsigned-ca
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: cache-operator-deployment
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/imagePullPolicy
+      value: Never
+
+    - op: add
+      path: /spec/template/spec/volumes/-
+      value:
+          name: tls-secret
+          secret:
+            secretName: root-cert-secret
+
+    - op: add
+      path: /spec/template/spec/containers/0/volumeMounts/-
+      value:
+          name: tls-secret
+          mountPath: /etc/tls
+          readOnly: true

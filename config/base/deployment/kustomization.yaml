@@ -1,0 +1,12 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+resources:
+- operator-deployment.yaml
+- operator-config.yaml
+- metrics-service.yaml
+- webhook-service.yaml
+images:
+  - name: kuroboros-operator:latest
+    newName: cache-operator
+    newTag: v0.0.1

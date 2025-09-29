@@ -1,0 +1,23 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: operator-config
+  namespace: cache-operator
+data:
+  operator.toml: |-
+    [operator]
+    name = "cache-operator"
+    leader_acquire_interval_seconds = 10
+    log_level = "INFO"
+    cleanup_interval_seconds = 5.0
+    pending_remove_interval_seconds = 5
+
+    [operator.metrics]
+    interval_seconds = 9
+    port = 8080
+
+    [operator.webhook_server]
+    port = 443
+    cert_path = "/etc/tls/tls.crt"
+    key_path = "/etc/tls/tls.key"
+    gunicorn_workers = 1

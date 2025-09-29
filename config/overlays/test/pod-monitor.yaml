@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cache-operator
+  namespace: cache-operator
+  labels:
+    app: cache-operator
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: cache-operator
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 10s
